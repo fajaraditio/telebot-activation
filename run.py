@@ -4,6 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 import time
 import csv
+import subprocess
 
 driver = webdriver.Firefox()
 driver.get("https://web.telegram.org/k/")
@@ -50,7 +51,7 @@ if (waitingDriver == True):
     telegramMsg.click()
 
     time.sleep(5)
-    
+
     telegramChats = driver.find_elements_by_xpath(
         "//div[@class='message']")
 
@@ -79,7 +80,8 @@ if (waitingDriver == True):
 
     time.sleep(5)
 
-    appInput = driver.find_elements_by_xpath("//span[@class='form-control input-xlarge uneditable-input'][@onclick='this.select();']")
+    appInput = driver.find_elements_by_xpath(
+        "//span[@class='form-control input-xlarge uneditable-input'][@onclick='this.select();']")
 
     appData = []
     for currentApp in appInput:
@@ -88,7 +90,8 @@ if (waitingDriver == True):
     if len(appData) == 0:
         appTitleInput = driver.find_element_by_id("app_title")
         appShortnameInput = driver.find_element_by_id("app_shortname")
-        platformCheckbox = driver.find_element_by_xpath("//input[@value='other']")
+        platformCheckbox = driver.find_element_by_xpath(
+            "//input[@value='other']")
         saveBtn = driver.find_element_by_id("app_save_btn")
 
         appTitleInput.send_keys("Barbara Muda")
@@ -101,8 +104,9 @@ if (waitingDriver == True):
 
         time.sleep(2)
 
-        appInput = driver.find_elements_by_xpath("//span[@class='form-control input-xlarge uneditable-input'][@onclick='this.select();']")
-        
+        appInput = driver.find_elements_by_xpath(
+            "//span[@class='form-control input-xlarge uneditable-input'][@onclick='this.select();']")
+
         appData = []
         for currentApp in appInput:
             appData.append(currentApp.text)
@@ -117,5 +121,8 @@ if (waitingDriver == True):
         CSVWriter = csv.writer(CSVFile)
         CSVWriter.writerow(['phoneNumber', 'appId', 'appHash'])
         CSVWriter.writerow([phoneNumber, appId, appHash])
+
+    subprocess.Popen("cp -r runner " + phoneNumber + "/")
+    
 
     driver.close()
