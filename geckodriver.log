@@ -51,3 +51,63 @@ JavaScript error: , line 0: uncaught exception: Object
 JavaScript error: , line 0: uncaught exception: Object
 console.log: WebExtensions: reset-default-search: starting.
 console.log: WebExtensions: reset-default-search: No addons in our list are installed.
+1633985369135	geckodriver	INFO	Listening on 127.0.0.1:63256
+1633985369175	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-foreground" "-no-remote" "-profile" "/var/folders/wb/6nqp30nx0kbggmws9y7ls5qh0000gn/T/rust_mozprofileuSQIRw"
+1633985370283	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /var/folders/wb/6nqp30nx0kbggmws9y7ls5qh0000gn/T/rust_mozprofileuSQIRw/search.json.mozlz4", (void 0)))
+console.error: BackgroundUpdate: 
+  _reasonsToNotScheduleUpdates: Failed to check for Maintenance Service Registry Key: [Exception... "Component returned failure code: 0x80004001 (NS_ERROR_NOT_IMPLEMENTED) [nsIUpdateProcessor.getServiceRegKeyExists]"  nsresult: "0x80004001 (NS_ERROR_NOT_IMPLEMENTED)"  location: "JS frame :: resource://gre/modules/BackgroundUpdate.jsm :: _reasonsToNotScheduleUpdates :: line 243"  data: no]
+1633985373188	Marionette	INFO	Listening on port 63265
+1633985373236	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: , line 0: uncaught exception: Object
+1633985576341	Marionette	INFO	Stopped listening on port 63265
+JavaScript error: resource:///modules/Interactions.jsm, line 201: NS_ERROR_FAILURE: Component returned failure code: 0x80004005 (NS_ERROR_FAILURE) [nsIUserIdleService.removeIdleObserver]
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1633985600629	geckodriver	INFO	Listening on 127.0.0.1:63578
+1633985601665	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-foreground" "-no-remote" "-profile" "/var/folders/wb/6nqp30nx0kbggmws9y7ls5qh0000gn/T/rust_mozprofileXKAZAK"
+1633985602421	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /var/folders/wb/6nqp30nx0kbggmws9y7ls5qh0000gn/T/rust_mozprofileXKAZAK/search.json.mozlz4", (void 0)))
+console.error: BackgroundUpdate: 
+  _reasonsToNotScheduleUpdates: Failed to check for Maintenance Service Registry Key: [Exception... "Component returned failure code: 0x80004001 (NS_ERROR_NOT_IMPLEMENTED) [nsIUpdateProcessor.getServiceRegKeyExists]"  nsresult: "0x80004001 (NS_ERROR_NOT_IMPLEMENTED)"  location: "JS frame :: resource://gre/modules/BackgroundUpdate.jsm :: _reasonsToNotScheduleUpdates :: line 243"  data: no]
+1633985604789	Marionette	INFO	Listening on port 63590
+1633985604894	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: , line 0: uncaught exception: Object
+1633985643296	Marionette	INFO	Stopped listening on port 63590
+JavaScript error: resource:///modules/Interactions.jsm, line 201: NS_ERROR_FAILURE: Component returned failure code: 0x80004005 (NS_ERROR_FAILURE) [nsIUserIdleService.removeIdleObserver]
+JavaScript error: https://web.telegram.org/k/main.3f7a70559679af85e450.bundle.js, line 1: NS_ERROR_NOT_INITIALIZED: 
+1633985645880	geckodriver	INFO	Listening on 127.0.0.1:63699
+1633985645904	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-foreground" "-no-remote" "-profile" "/var/folders/wb/6nqp30nx0kbggmws9y7ls5qh0000gn/T/rust_mozprofileyY514a"
+1633985646682	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /var/folders/wb/6nqp30nx0kbggmws9y7ls5qh0000gn/T/rust_mozprofileyY514a/search.json.mozlz4", (void 0)))
+console.error: BackgroundUpdate: 
+  _reasonsToNotScheduleUpdates: Failed to check for Maintenance Service Registry Key: [Exception... "Component returned failure code: 0x80004001 (NS_ERROR_NOT_IMPLEMENTED) [nsIUpdateProcessor.getServiceRegKeyExists]"  nsresult: "0x80004001 (NS_ERROR_NOT_IMPLEMENTED)"  location: "JS frame :: resource://gre/modules/BackgroundUpdate.jsm :: _reasonsToNotScheduleUpdates :: line 243"  data: no]
+1633985649175	Marionette	INFO	Listening on port 63708
+1633985649220	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: , line 0: uncaught exception: Object
+1633985735232	Marionette	INFO	Stopped listening on port 63708
+JavaScript error: resource:///modules/Interactions.jsm, line 201: NS_ERROR_FAILURE: Component returned failure code: 0x80004005 (NS_ERROR_FAILURE) [nsIUserIdleService.removeIdleObserver]
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1633986341731	geckodriver	INFO	Listening on 127.0.0.1:64361
+1633986342762	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-foreground" "-no-remote" "-profile" "/var/folders/wb/6nqp30nx0kbggmws9y7ls5qh0000gn/T/rust_mozprofileMXu49K"
+1633986343841	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /var/folders/wb/6nqp30nx0kbggmws9y7ls5qh0000gn/T/rust_mozprofileMXu49K/search.json.mozlz4", (void 0)))
+console.error: BackgroundUpdate: 
+  _reasonsToNotScheduleUpdates: Failed to check for Maintenance Service Registry Key: [Exception... "Component returned failure code: 0x80004001 (NS_ERROR_NOT_IMPLEMENTED) [nsIUpdateProcessor.getServiceRegKeyExists]"  nsresult: "0x80004001 (NS_ERROR_NOT_IMPLEMENTED)"  location: "JS frame :: resource://gre/modules/BackgroundUpdate.jsm :: _reasonsToNotScheduleUpdates :: line 243"  data: no]
+1633986346829	Marionette	INFO	Listening on port 64373
+1633986346929	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: , line 0: uncaught exception: Object
+JavaScript error: , line 0: uncaught exception: Object
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
