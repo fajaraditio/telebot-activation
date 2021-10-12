@@ -194,12 +194,9 @@ def drivingBrowser():
 
             json.dump(data, JSONFile, indent=4)
             JSONFile.truncate()
-        # driver.close()
+            
+        driver.quit()
 
 # DRIVE SAFE
 
 drivingBrowser()
-
-# loop = asyncio.get_event_loop()
-# loop.run_until_complete(telegramLogin(
-#             "+6283123591441", 8811341, "649401c330298b40c4b2ddbc51c17e2f",  "stored/+6283123591441/session/", 82196, "82196abc"))
