@@ -5,9 +5,6 @@ Telegram Activator for getting started setting up many bots at one-time. Just lo
 ## Installation for MacOS
 - Install [Python 3](https://www.python.org/downloads/)
 - Use the package manager Use the package manager [pip](https://pip.pypa.io/en/stable/) to install all `requirements.txt`.
-```bash
-pip install foobar
-```
 - Install all requirements:
 ```bash
 pip install -r requirements.txt
