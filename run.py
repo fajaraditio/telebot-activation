@@ -10,7 +10,7 @@ import csv
 
 
 async def telegramInit(phoneNumber, appId, appHash, sessionFolder):
-    print(phoneNumber)
+    print("Send Code:" + phoneNumber)
 
     client = TelegramClient(sessionFolder, appId, appHash)
 
@@ -18,6 +18,13 @@ async def telegramInit(phoneNumber, appId, appHash, sessionFolder):
     await client.send_code_request(phoneNumber)
     # await client.disconnect()
 
+async def telegramLogin(phoneNumber, appId, appHash, sessionFolder, code):
+    print("Login: " + phoneNumber)
+    client = TelegramClient(sessionFolder, appId, appHash)
+
+    await client.connect()
+    await client.sign_in(phoneNumber, code)
+    # await client.disconnect()
 
 def drivingBrowser():
     driver = webdriver.Firefox()
@@ -133,10 +140,11 @@ def drivingBrowser():
             appId = appData[0]
             appHash = appData[1]
 
-        with open('telebot.csv', 'wb', encoding='UTF8', newline='') as CSVFile:
-            CSVWriter = csv.writer(CSVFile)
-            CSVWriter.writerow(['phoneNumber', 'appId', 'appHash'])
-            CSVWriter.writerow([phoneNumber, appId, appHash])
+        with open('telebot.csv', 'a') as CSVFile:
+            fieldnames = ['phoneNumber', 'appId', 'appHash']
+            CSVWriter = csv.DictWriter(CSVFile, fieldnames=fieldnames)
+            CSVWriter.writeheader()
+            CSVWriter.writerow({"phoneNumber": phoneNumber, "appId": appId, "appHash": appHash})
 
         runnerMaster = "runner"
         runnerStored = "stored/" + phoneNumber
@@ -148,6 +156,10 @@ def drivingBrowser():
         loop = asyncio.get_event_loop()
         loop.run_until_complete(telegramInit(
             phoneNumber, appId, appHash, sessionFolder))
+
+        driver.switch_to.window(driver.window_handles[0])
+
+        time.sleep(5)
 
         driver.close()
 
