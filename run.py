@@ -7,7 +7,9 @@ from shutil import copytree
 import asyncio
 import time
 import csv
+import json
 import re
+import os
 
 
 async def telegramInit(phoneNumber, appId, appHash, sessionFolder):
@@ -16,15 +18,17 @@ async def telegramInit(phoneNumber, appId, appHash, sessionFolder):
     client = TelegramClient(sessionFolder, appId, appHash)
 
     await client.connect()
-    await client.send_code_request(phoneNumber)
+    codeSent = await client.send_code_request(phoneNumber)
     # await client.disconnect()
 
-async def telegramLogin(phoneNumber, appId, appHash, sessionFolder, code):
+    return codeSent
+
+async def telegramLogin(phoneNumber, appId, appHash, sessionFolder, code, phoneCodeHash):
     print("Login: " + phoneNumber)
     client = TelegramClient(sessionFolder, appId, appHash)
 
     await client.connect()
-    await client.sign_in(phoneNumber, code)
+    await client.sign_in(phone=phoneNumber, code=code, password=None, bot_token=None, phone_code_hash=phoneCodeHash)
     # await client.disconnect()
 
 def drivingBrowser():
@@ -150,12 +154,13 @@ def drivingBrowser():
         runnerMaster = "runner"
         runnerStored = "stored/" + phoneNumber
 
-        copytree(runnerMaster, runnerStored)
+        if (os.path.exists("./" + runnerStored) == False):
+            copytree(runnerMaster, runnerStored)
 
         sessionFolder = runnerStored + '/session/' + phoneNumber
 
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(telegramInit(
+        telegramInitiate = loop.run_until_complete(telegramInit(
             phoneNumber, appId, appHash, sessionFolder))
 
         driver.switch_to.window(driver.window_handles[0])
@@ -170,12 +175,31 @@ def drivingBrowser():
             chats.append(currentChat.text)
 
         telegramCode = chats[len(chats) - 1]
-        telegramCode = re.sub("[^0-9]", "", telegramCode)
+        telegramCode = re.sub("[^0-9]", "", telegramCode)[0:5]
 
         print(telegramCode)
 
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(telegramLogin(
+            phoneNumber, appId, appHash, sessionFolder, telegramCode, telegramInitiate.phone_code_hash))
+
+        JSONFile = runnerStored + "/config.json" 
+        with open(JSONFile) as JSONFile:
+            data = json.load(JSONFile)
+            data['account']['phone'] = phoneNumber
+            data['account']['api_id'] = appId
+            data['account']['api_hash'] = appHash
+
+            JSONFile.seek(0)
+
+            json.dump(data, JSONFile, indent=4)
+            JSONFile.truncate()
         # driver.close()
 
 # DRIVE SAFE
 
 drivingBrowser()
+
+# loop = asyncio.get_event_loop()
+# loop.run_until_complete(telegramLogin(
+#             "+6283123591441", 8811341, "649401c330298b40c4b2ddbc51c17e2f",  "stored/+6283123591441/session/", 82196, "82196abc"))
