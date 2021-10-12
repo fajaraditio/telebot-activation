@@ -7,6 +7,7 @@ from shutil import copytree
 import asyncio
 import time
 import csv
+import re
 
 
 async def telegramInit(phoneNumber, appId, appHash, sessionFolder):
@@ -151,7 +152,7 @@ def drivingBrowser():
 
         copytree(runnerMaster, runnerStored)
 
-        sessionFolder = runnerStored + '/session/' + phoneNumber.replace('+', '')
+        sessionFolder = runnerStored + '/session/' + phoneNumber
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(telegramInit(
@@ -161,7 +162,19 @@ def drivingBrowser():
 
         time.sleep(5)
 
-        driver.close()
+        telegramChats = driver.find_elements_by_xpath(
+            "//div[@class='message']")
+
+        chats = []
+        for currentChat in telegramChats:
+            chats.append(currentChat.text)
+
+        telegramCode = chats[len(chats) - 1]
+        telegramCode = re.sub("[^0-9]", "", telegramCode)
+
+        print(telegramCode)
+
+        # driver.close()
 
 # DRIVE SAFE
 
