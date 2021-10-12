@@ -184,7 +184,7 @@ def drivingBrowser():
             phoneNumber, appId, appHash, sessionFolder, telegramCode, telegramInitiate.phone_code_hash))
 
         JSONFile = runnerStored + "/config.json" 
-        with open(JSONFile) as JSONFile:
+        with open(JSONFile, "r+") as JSONFile:
             data = json.load(JSONFile)
             data['account']['phone'] = phoneNumber
             data['account']['api_id'] = appId
