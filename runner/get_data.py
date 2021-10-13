@@ -103,13 +103,12 @@ def get_data_user(client, group):
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.loads(f.read())
 
-accounts = config['accounts']
+account = config['account']
 
 folder_session = 'session/'
 
-for account in accounts:
-    api_id = account['api_id']
-    api_hash = account['api_hash']
-    phone = account['phone']
-    print(phone)
-    get_group(phone, api_id, api_hash)
+api_id = account['api_id']
+api_hash = account['api_hash']
+phone = account['phone']
+print(phone)
+get_group(phone, api_id, api_hash)

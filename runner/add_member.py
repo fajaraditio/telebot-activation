@@ -27,38 +27,38 @@ logging.basicConfig(level=logging.WARNING)
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.loads(f.read())
 
-accounts = config['accounts']
-print("Total account: " + str(len(accounts)))
+account = config['account']
+print("Total account: " + str(len(account)))
 folder_session = 'session/'
 
 # group target
 group_target_id = config['group_target']
 # group source
 group_source_id = config['group_source']
-#date_online_from
+# date_online_from
 from_date_active = '19700101'
 if 'from_date_active' in config:
-	from_date_active = config['from_date_active']
+    from_date_active = config['from_date_active']
 
 # list client
 clients = []
-for account in accounts:
-    api_id = account['api_id']
-    api_hash = account['api_hash']
-    phone = account['phone']
 
-    client = TelegramClient(folder_session + phone, api_id, api_hash)
+api_id = account['api_id']
+api_hash = account['api_hash']
+phone = account['phone']
 
-    client.connect()
+client = TelegramClient(folder_session + phone, api_id, api_hash)
 
-    if client.is_user_authorized():
-        print(phone + ' login success')
-        clients.append({
-            'phone': phone,
-            'client': client
-        })
-    else:
-        print(phone + ' login fail')
+client.connect()
+
+if client.is_user_authorized():
+    print(phone + ' login success')
+    clients.append({
+        'phone': phone,
+        'client': client
+    })
+else:
+    print(phone + ' login fail')
 
 filter_clients = []
 
@@ -74,9 +74,11 @@ for my_client in clients:
 
         if current_target_group:
             group_access_hash = int(current_target_group['access_hash'])
-            target_group_entity = InputPeerChannel(group_target_id, group_access_hash)
+            target_group_entity = InputPeerChannel(
+                group_target_id, group_access_hash)
 
-            path_group_user = root_path + '/data/user/' + phone + "_" + str(group_source_id) + '.json'
+            path_group_user = root_path + '/data/user/' + \
+                phone + "_" + str(group_source_id) + '.json'
             if os.path.isfile(path_group_user):
                 # add target_group_entity key value
                 my_client['target_group_entity'] = target_group_entity
@@ -85,11 +87,14 @@ for my_client in clients:
 
                 filter_clients.append(my_client)
             else:
-                print('This account with phone ' + str(phone) + ' is not in source group')
+                print('This account with phone ' +
+                      str(phone) + ' is not in source group')
         else:
-            print('This account with phone ' + str(phone) + ' is not in target group')
+            print('This account with phone ' +
+                  str(phone) + ' is not in target group')
     else:
-        print('This account with phone do not have data. Please run get_data or init_session')
+        print(
+            'This account with phone do not have data. Please run get_data or init_session')
 
 # run
 previous_count = 0
@@ -137,16 +142,18 @@ while i < total_user:
 
     if user['date_online'] != 'online' and user['date_online'] < from_date_active:
         i += 1
-        print('User ' + user['user_id'] + ' has time active: ' + user['date_online'] + ' is overdue')
+        print('User ' + user['user_id'] + ' has time active: ' +
+              user['date_online'] + ' is overdue')
         continue
 
     target_group_entity = current_client['target_group_entity']
 
     try:
         print('add member: ' + user['user_id'])
-        user_to_add = InputPeerUser(int(user['user_id']), int(user['access_hash']))
+        user_to_add = InputPeerUser(
+            int(user['user_id']), int(user['access_hash']))
         client(InviteToChannelRequest(target_group_entity, [user_to_add]))
-        print('Add member '+ user['user_id'] +' success')
+        print('Add member ' + user['user_id'] + ' success')
         count_add += 1
         print('sleep: ' + str(120 / total_client))
         time.sleep(120 / total_client)
