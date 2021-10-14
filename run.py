@@ -1,9 +1,15 @@
+from __future__ import print_function, unicode_literals
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
-from telethon import TelegramClient
+from telethon.tl.functions.messages import GetDialogsRequest
+from telethon.tl.types import InputPeerEmpty, UserStatusOffline, UserStatusRecently, UserStatusLastMonth, \
+    UserStatusLastWeek
+from telethon import TelegramClient, sync, connection
+from PyInquirer import prompt, print_json
 from shutil import copytree
+from datetime import datetime, timedelta
 import asyncio
 import time
 import csv
@@ -12,10 +18,10 @@ import re
 import os
 
 
-async def telegramInit(phoneNumber, appId, appHash, sessionFolder):
+async def telegramInit(phoneNumber, appId, appHash, runnerFolder):
     print("Send Code:" + phoneNumber)
 
-    client = TelegramClient(sessionFolder, appId, appHash)
+    client = TelegramClient(runnerFolder + '/session/' + phoneNumber, appId, appHash)
 
     await client.connect()
     codeSent = await client.send_code_request(phoneNumber)
@@ -23,13 +29,148 @@ async def telegramInit(phoneNumber, appId, appHash, sessionFolder):
 
     return codeSent
 
-async def telegramLogin(phoneNumber, appId, appHash, sessionFolder, code, phoneCodeHash):
+
+async def telegramLogin(phoneNumber, appId, appHash, runnerFolder, code, phoneCodeHash):
     print("Login: " + phoneNumber)
-    client = TelegramClient(sessionFolder, appId, appHash)
+    client = TelegramClient(runnerFolder + '/session/' + phoneNumber, appId, appHash)
 
     await client.connect()
     await client.sign_in(phone=phoneNumber, code=code, password=None, bot_token=None, phone_code_hash=phoneCodeHash)
     # await client.disconnect()
+
+
+def telegramAddGroup(phoneNumber, appId, appHash, runnerFolder):
+    client = TelegramClient(runnerFolder + '/session/' + phoneNumber, appId, appHash)
+    client.connect()
+
+    if not client.is_user_authorized():
+        print('Login fail, need to run init_session')
+        exit()
+
+    print('getting data ' + phoneNumber)
+    chats = []
+    last_date = None
+    chunk_size = 200
+    groups = []
+
+    query = client(GetDialogsRequest(
+        offset_date=last_date,
+        offset_id=0,
+        offset_peer=InputPeerEmpty(),
+        limit=chunk_size,
+        hash=0
+    ))
+
+    chats.extend(query.chats)
+
+    for chat in chats:
+        try:
+            if chat.megagroup is not None and chat.access_hash is not None:
+                groups.append(chat)
+        except:
+            continue
+
+    results = []
+    choices = []
+    i = 0
+    for group in groups:
+
+        try:
+            choices.append(str(i) + '. ' + str(group.title) + ' #- ' + str(group.id))
+
+            tmp = {
+                'group_id': str(group.id),
+                'access_hash': str(group.access_hash),
+                'title': str(group.title),
+            }
+            results.append(tmp)
+
+            if group.megagroup == True:
+                telegramGetUserData(client, phoneNumber, group, runnerFolder)
+        except Exception as e:
+            choices.append(["No choice"])
+            print(e)
+            print('error save group')
+            
+        i += 1
+
+    with open(runnerFolder + '/data/group/' + phoneNumber + '.json', 'w', encoding='utf-8') as f:
+        json.dump(results, f, indent=4, ensure_ascii=False)
+
+    
+    groupTargetPrompt = {
+        'type': 'list',
+        'name': 'group_target',
+        'message': 'Choose Target',
+        'choices': choices,
+        'filter': lambda choice : choice.split('#-')[1]
+    }
+    
+    groupSourcePrompt = {
+        'type': 'list',
+        'name': 'group_source',
+        'message': 'Choose Source',
+        'choices': choices,
+        'filter': lambda choice : (choice.split('#-')[1]).replace(' ', '')
+ 
+    }
+
+    groupPrompt = [groupTargetPrompt, groupSourcePrompt]
+
+    answer = prompt(groupPrompt)
+
+    updateConfigByAnsweredPrompt(answer, runnerFolder)
+
+def telegramGetUserData(client, phoneNumber, group, runnerFolder):
+    group_id = str(group.id)
+    print(group_id)
+
+    all_participants = client.get_participants(group, aggressive=True)
+    results = []
+    today = datetime.now()
+    last_week = today + timedelta(days=-7)
+    last_month = today + timedelta(days=-30)
+    path_file = runnerFolder + '/data/user/' + phoneNumber + "_" + group_id + '.json'
+
+    for user in all_participants:
+        # print(user)
+        # print(type(user.status))
+        try:
+            if isinstance(user.status, UserStatusRecently):
+                date_online_str = 'online'
+            else:
+                if isinstance(user.status, UserStatusLastMonth):
+                    date_online = last_month
+                if isinstance(user.status, UserStatusLastWeek):
+                    date_online = last_week
+                if isinstance(user.status, UserStatusOffline):
+                    date_online = user.status.was_online
+
+                date_online_str = date_online.strftime("%Y%m%d")
+            tmp = {
+                'user_id': str(user.id),
+                'access_hash': str(user.access_hash),
+                'username': str(user.username),
+                "date_online": date_online_str
+            }
+            results.append(tmp)
+        except:
+            print("Error get user")
+    with open(path_file, 'w', encoding='utf-8') as f:
+        json.dump(results, f, indent=4, ensure_ascii=False)
+
+def updateConfigByAnsweredPrompt(answer, runnerFolder):
+    JSONFile = runnerFolder + "/config.json"
+    with open(JSONFile, "r+") as JSONFile:
+        data = json.load(JSONFile)
+        data['group_target'] = re.sub("[^0-9]", "", answer['group_target'])
+        data['group_source'] = re.sub("[^0-9]", "", answer['group_source'])
+
+        JSONFile.seek(0)
+
+        json.dump(data, JSONFile, indent=4)
+        JSONFile.truncate()
+
 
 def drivingBrowser():
     driver = webdriver.Firefox()
@@ -149,7 +290,8 @@ def drivingBrowser():
             fieldnames = ['phoneNumber', 'appId', 'appHash']
             CSVWriter = csv.DictWriter(CSVFile, fieldnames=fieldnames)
             CSVWriter.writeheader()
-            CSVWriter.writerow({"phoneNumber": phoneNumber, "appId": appId, "appHash": appHash})
+            CSVWriter.writerow({"phoneNumber": phoneNumber,
+                               "appId": appId, "appHash": appHash})
 
         runnerMaster = "runner"
         runnerStored = "stored/" + phoneNumber
@@ -157,11 +299,9 @@ def drivingBrowser():
         if (os.path.exists("./" + runnerStored) == False):
             copytree(runnerMaster, runnerStored)
 
-        sessionFolder = runnerStored + '/session/' + phoneNumber
-
         loop = asyncio.get_event_loop()
         telegramInitiate = loop.run_until_complete(telegramInit(
-            phoneNumber, appId, appHash, sessionFolder))
+            phoneNumber, appId, appHash, runnerStored))
 
         driver.switch_to.window(driver.window_handles[0])
 
@@ -181,9 +321,9 @@ def drivingBrowser():
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(telegramLogin(
-            phoneNumber, appId, appHash, sessionFolder, telegramCode, telegramInitiate.phone_code_hash))
+            phoneNumber, appId, appHash, runnerStored, telegramCode, telegramInitiate.phone_code_hash))
 
-        JSONFile = runnerStored + "/config.json" 
+        JSONFile = runnerStored + "/config.json"
         with open(JSONFile, "r+") as JSONFile:
             data = json.load(JSONFile)
             data['account']['phone'] = phoneNumber
@@ -194,9 +334,12 @@ def drivingBrowser():
 
             json.dump(data, JSONFile, indent=4)
             JSONFile.truncate()
-            
+
+        telegramAddGroup(phoneNumber, appId, appHash, runnerStored)
+
         driver.quit()
 
 # DRIVE SAFE
+
 
 drivingBrowser()
