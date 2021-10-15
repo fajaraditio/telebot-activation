@@ -25,7 +25,7 @@ async def telegramInit(phoneNumber, appId, appHash, runnerFolder):
 
     await client.connect()
     codeSent = await client.send_code_request(phoneNumber)
-    # await client.disconnect()
+    await client.disconnect()
 
     return codeSent
 
@@ -36,7 +36,7 @@ async def telegramLogin(phoneNumber, appId, appHash, runnerFolder, code, phoneCo
 
     await client.connect()
     await client.sign_in(phone=phoneNumber, code=code, password=None, bot_token=None, phone_code_hash=phoneCodeHash)
-    # await client.disconnect()
+    await client.disconnect()
 
 
 def telegramAddGroup(phoneNumber, appId, appHash, runnerFolder):
